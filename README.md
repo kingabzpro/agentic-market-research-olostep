@@ -8,6 +8,8 @@ This project helps you go from a plain-language research topic to:
 - trend analysis
 - concise technical research brief
 
+<img width="1847" height="857" alt="image" src="https://github.com/user-attachments/assets/0ecc4ad7-fe2d-49df-8e22-8ec28152ce33" />
+
 It is domain-agnostic. SMB prompts in examples are only sample inputs.
 
 ## What You Get
