@@ -1,0 +1,28 @@
+{
+  "id": "answer_qmfs5ep34f",
+  "object": "answer",
+  "created": 1772463694,
+  "metadata": {},
+  "task": "AI-native campaign orchestration for local businesses",
+  "result": {
+    "json_content": "{\"result\":\"ActiveCampaign with Active Intelligence is currently the most visible AI-native platform offering autonomous campaign orchestration for local businesses; it deploys multiple AI agents that handle segmentation, personalization, goal setting, channel selection and campaign optimization across email, SMS, WhatsApp and more without human intervention. Other emergent options include Tiger Pistol’s AI-powered creative/campaign automation for localized social and search ads, the niche SMB Autopilot (service-area businesses), and ActiveCampaign’s broader “autonomous marketing” suite. No single “AI-native campaign orchestration” product is yet purpose-built exclusively for local SMBs, so most solutions are vertical add-ons or scaled-down enterprise features.\"}",
+    "json_hosted_url": "https://olostep-storage.s3.us-east-1.amazonaws.com/answer_qmfs5ep34f.json",
+    "sources": [
+      "https://www.activecampaign.com/blog/autonomous-marketing",
+      "https://www.linkedin.com/posts/inntopia_we-are-incredibly-excited-to-announce-a-major-activity-7427024109865349120-3pdF",
+      "https://www.activecampaign.com/",
+      "https://www.activecampaign.com/blog/ai-native-marketing",
+      "https://business.adobe.com/blog/basics/account-based-orchestration",
+      "https://www.oliv.ai/blog/best-revenue-orchestration-platform-tools",
+      "https://davincicommerce.ai/",
+      "https://smbautopilot.ai/",
+      "https://tigerpistol.com/ai-automation-for-smb-local-advertising/",
+      "https://www.reddit.com/r/smallbusiness/comments/1mtz1dl/what_ai_solution_do_you_as_an_smb_find_most/",
+      "https://www.salesforce.com/blog/autonomous-vs-assistive-agents/",
+      "https://www.blaze.ai/",
+      "https://www.reddit.com/r/smallbusiness/comments/1qo267y/small_business_owners_which_ai_platform_actually/",
+      "https://www.marketermilk.com/blog/ai-marketing-tools",
+      "https://www.eesel.ai/blog/ai-marketing-tools-for-small-business"
+    ]
+  }
+}

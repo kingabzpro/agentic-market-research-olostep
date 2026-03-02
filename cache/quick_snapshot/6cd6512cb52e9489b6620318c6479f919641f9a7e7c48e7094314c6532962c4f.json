@@ -1,0 +1,27 @@
+{
+  "id": "answer_qc7bmsiab5",
+  "object": "answer",
+  "created": 1772463644,
+  "metadata": {},
+  "task": "B2B SMB CRM copilots and automation trends",
+  "result": {
+    "json_content": "{\"result\":\"Key B2B SMB CRM copilot and automation trends for 2024 include: 91 % of SMBs using AI report revenue boosts, 75 % are actively experimenting with AI, and growing SMBs plan to increase AI investment next year at nearly twice the pace of declining peers. Top AI-driven CRM use cases are campaign optimization, content generation, automated recommendations, natural-language search, and service chatbots. Microsoft’s Copilot is extending from conversation builder to full workflow automation and integrates across Dynamics 365 CRM/ERP; HubSpot’s free CRM automates lead scoring, email follow-ups, meeting scheduling, and reporting; Zoho’s AI assistant Zia offers generative-AI module/workflow creation, churn prediction, trend detection, email sentiment, call transcription, and one-click automation. Challenges for SMBs are data-quality readiness, siloed systems, skills gaps, integration costs, and security concerns; successful adopters share traits of strong data-management focus, integrated tech stack, and trusted-vendor selection.\"}",
+    "json_hosted_url": "https://olostep-storage.s3.us-east-1.amazonaws.com/answer_qc7bmsiab5.json",
+    "sources": [
+      "https://www.zoho.com/crm/ai-features-in-zoho-crm.html",
+      "https://techaisle.com/analytics-and-ai-reports/251-2024-smb-midmarket-ai-adoption-trends",
+      "https://www.youtube.com/watch?v=Xei8oT7G9B8",
+      "https://www.zoho.com/crm/enterprise/solutions/artificial-intelligence.html",
+      "https://www.zoho.com/zia/",
+      "https://www.zoho.com/crm/zia/",
+      "https://www.hubspot.com/products/crm/starter",
+      "https://www.hubspot.com/products/crm",
+      "https://www.hubspot.com/",
+      "https://www.hubspot.com/products/crm/small-business",
+      "https://www.osibeyond.com/blog/microsoft-copilot/",
+      "https://www.salesforce.com/news/stories/smbs-ai-trends-2025/",
+      "https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2024/04/16/ai-powered-innovations-enhance-customer-service-with-2024-release-wave-1/",
+      "https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2024/03/04/ai-in-crm-and-erp-systems-2024-trends-innovations-and-best-practices/"
+    ]
+  }
+}

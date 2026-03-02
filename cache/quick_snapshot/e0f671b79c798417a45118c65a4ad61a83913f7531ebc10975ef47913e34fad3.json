@@ -1,0 +1,28 @@
+{
+  "id": "answer_ov80qtw8cf",
+  "object": "answer",
+  "created": 1772462837,
+  "metadata": {},
+  "task": "AI agents for SMB email and social marketing automation",
+  "result": {
+    "json_content": "{\"result\":\"Top AI agents & platforms for SMB email + social automation include: 1) Mailchimp – AI send-time optimization, predictive personalization, automated drip email & social ad campaigns from <$20/mo. 2) HubSpot Marketing Hub – AI copy, lead scoring, cross-channel workflows (email, social, SMS). 3) ActiveCampaign – predictive sending, split automations, social audience sync. 4) Brevo (Sendinblue) – AI email/SMS send-time, social retargeting from $19/mo. 5) Klaviyo – AI-generated segments, subject-line A/B tests, SMS/push/email flows for ecommerce. 6) Zoho Marketing Plus – AI “Zia” assistant, multi-channel automations. 7) Jasper.ai – generative AI for email & social copy. All integrate with major CRMs, offer free/low-cost tiers, and provide drag-and-drop builders suited for small teams.\"}",
+    "json_hosted_url": "https://olostep-storage.s3.us-east-1.amazonaws.com/answer_ov80qtw8cf.json",
+    "sources": [
+      "https://www.klaviyo.com/blog/ai-tools-for-small-businesses",
+      "https://www.averi.ai/blog/top-10-affordable-ai-marketing-tools-that-smbs-can-actually-use",
+      "https://samueljwoods.com/ai-marketing-automation-tools/",
+      "https://zapier.com/blog/best-ai-social-media-management/",
+      "https://firstratetechcorp.com/discover-ai-marketing-automation-tools-for-small-biz-success/",
+      "https://syntora.io/solutions/best-ai-marketing-tools-for-small-business-owners",
+      "https://meetdexy.ai/blogs/best-ai-tools-for-small-business",
+      "https://pipeline.zoominfo.com/marketing/ai-email-marketing-tools",
+      "https://insiderone.com/best-marketing-automation-tools-smbs-enterprises/",
+      "https://www.reddit.com/r/smallbusiness/comments/1r13yu4/marketing_automation_software_for_small_business/",
+      "https://www.nimble.com/",
+      "https://www.cometly.com/post/best-ai-driven-marketing-tools-for-small-businesses",
+      "https://zapier.com/blog/best-marketing-automation-software/",
+      "https://www.emailtooltester.com/en/blog/free-email-marketing-services/",
+      "https://encharge.io/ai-email-tools/"
+    ]
+  }
+}
