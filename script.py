@@ -6,25 +6,49 @@ import logging
 import os
 import random
 import sys
+import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import requests
-from agents import Agent, RunConfig, Runner, function_tool, set_default_openai_client
+from agents import Agent, RunConfig, Runner, function_tool, set_default_openai_client, set_tracing_disabled
+from dotenv import load_dotenv
 from openai import AsyncOpenAI
 
-INITIAL_TASK = (
-    "Research current trends in AI agent tools used by SMB marketing teams. "
-    "Focus on recurring use cases, positioning, and common feature patterns."
+load_dotenv()
+
+INITIAL_TASK = os.getenv(
+    "INITIAL_TASK",
+    (
+        "Research current trends in AI agent tools used by SMB marketing teams. "
+        "Focus on recurring use cases, positioning, and common feature patterns."
+    ),
 )
-MODEL_NAME = "gpt-5.2"
+MODEL_NAME = os.getenv("MODEL_NAME", "gpt-5.2")
+OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "").strip()
 OLOSTEP_BASE_URL = os.getenv("OLOSTEP_BASE_URL", "https://api.olostep.com").rstrip("/")
-OUTPUT_DIR = Path("output")
-OUTPUT_MD_PATH = OUTPUT_DIR / "agents_sdk_style_market_research_top3_brief.md"
-OUTPUT_JSON_PATH = OUTPUT_DIR / "agents_sdk_style_market_research_top3_result.json"
+OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "output"))
+OUTPUT_MD_PATH = Path(
+    os.getenv(
+        "OUTPUT_MD_PATH",
+        str(OUTPUT_DIR / "agents_sdk_style_market_research_top3_brief.md"),
+    )
+)
+OUTPUT_JSON_PATH = Path(
+    os.getenv(
+        "OUTPUT_JSON_PATH",
+        str(OUTPUT_DIR / "agents_sdk_style_market_research_top3_result.json"),
+    )
+)
+AGENTS_TRACING_ENABLED = os.getenv("AGENTS_TRACING_ENABLED", "0").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
 
 
 def _enable_ansi_colors_on_windows() -> None:
@@ -126,21 +150,24 @@ def compact_text(value: Any, limit: int = 7000) -> str:
 
 def ensure_env() -> None:
     if not os.getenv("OPENAI_API_KEY"):
-        raise RuntimeError("OPENAI_API_KEY is missing.")
+        raise RuntimeError("OPENAI_API_KEY is missing. Create one here: https://platform.openai.com/api-keys")
     if not os.getenv("OLOSTEP_API_KEY"):
-        raise RuntimeError("OLOSTEP_API_KEY is missing.")
+        raise RuntimeError("OLOSTEP_API_KEY is missing. Create one here: https://app.olostep.com/")
 
 
 ensure_env()
-set_default_openai_client(AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"]))
+if not AGENTS_TRACING_ENABLED:
+    set_tracing_disabled(True)
+openai_client_kwargs = {"api_key": os.environ["OPENAI_API_KEY"]}
+if OPENAI_BASE_URL:
+    openai_client_kwargs["base_url"] = OPENAI_BASE_URL
+set_default_openai_client(AsyncOpenAI(**openai_client_kwargs))
 
-SESSION = requests.Session()
-SESSION.headers.update(
-    {
-        "Authorization": f"Bearer {os.environ['OLOSTEP_API_KEY']}",
-        "Content-Type": "application/json",
-    }
-)
+_THREAD_LOCAL = threading.local()
+_DEFAULT_HEADERS = {
+    "Authorization": f"Bearer {os.environ['OLOSTEP_API_KEY']}",
+    "Content-Type": "application/json",
+}
 
 TRANSIENT_HTTP_STATUS = {408, 429, 500, 502, 503, 504}
 OLOSTEP_TIMEOUT_SECONDS = 90
@@ -152,13 +179,25 @@ def _retry_delay(attempt: int) -> float:
     return min(8.0, (2 ** (attempt - 1)) + random.random())
 
 
+def _get_olostep_session() -> requests.Session:
+    # requests.Session is not guaranteed thread-safe; keep one per worker thread.
+    session = getattr(_THREAD_LOCAL, "olostep_session", None)
+    if isinstance(session, requests.Session):
+        return session
+
+    session = requests.Session()
+    session.headers.update(_DEFAULT_HEADERS)
+    _THREAD_LOCAL.olostep_session = session
+    return session
+
+
 def request_olostep(path: str, payload: dict[str, Any]) -> dict[str, Any]:
     url = f"{OLOSTEP_BASE_URL}{path}"
     last_error: Exception | None = None
 
     for attempt in range(1, OLOSTEP_MAX_RETRIES + 1):
         try:
-            response = SESSION.post(url, json=payload, timeout=OLOSTEP_TIMEOUT_SECONDS)
+            response = _get_olostep_session().post(url, json=payload, timeout=OLOSTEP_TIMEOUT_SECONDS)
         except (requests.Timeout, requests.ConnectionError) as exc:
             last_error = exc
             LOGGER.warning(
@@ -255,22 +294,35 @@ def parse_answer_result(raw_answer: dict[str, Any]) -> dict[str, Any]:
 
 
 def scrape_three_sources(top3_sources: list[str]) -> list[dict[str, Any]]:
-    scraped_pages: list[dict[str, Any]] = []
-    for idx, url in enumerate(top3_sources, start=1):
-        LOGGER.info("Scraping source %s/%s: %s", idx, len(top3_sources), url)
-        raw_scrape = olostep_scrape(url)
-        scrape_result = raw_scrape.get("result") if isinstance(raw_scrape.get("result"), dict) else {}
-        metadata = scrape_result.get("metadata") if isinstance(scrape_result.get("metadata"), dict) else {}
-        scraped_pages.append(
-            {
+    if not top3_sources:
+        return []
+
+    max_workers = min(3, len(top3_sources))
+    LOGGER.info("Scraping %s source(s) with up to %s concurrent Olostep call(s).", len(top3_sources), max_workers)
+
+    pages_by_index: dict[int, dict[str, Any]] = {}
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_item: dict[Any, tuple[int, str]] = {}
+        for idx, url in enumerate(top3_sources, start=1):
+            LOGGER.info("Queueing scrape source %s/%s: %s", idx, len(top3_sources), url)
+            future = executor.submit(olostep_scrape, url)
+            future_to_item[future] = (idx, url)
+
+        for future in as_completed(future_to_item):
+            idx, url = future_to_item[future]
+            raw_scrape = future.result()
+            scrape_result = raw_scrape.get("result") if isinstance(raw_scrape.get("result"), dict) else {}
+            metadata = scrape_result.get("metadata") if isinstance(scrape_result.get("metadata"), dict) else {}
+            pages_by_index[idx] = {
                 "url": url,
                 "title": str(metadata.get("title") or ""),
                 "content": compact_text(
                     scrape_result.get("markdown_content") or scrape_result.get("text_content")
                 ),
             }
-        )
-    return scraped_pages
+            LOGGER.info("Completed scrape source %s/%s: %s", idx, len(top3_sources), url)
+
+    return [pages_by_index[idx] for idx in sorted(pages_by_index)]
 
 
 def build_agents() -> tuple[Agent, Agent, Agent, Agent]:

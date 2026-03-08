@@ -65,12 +65,36 @@ pip install -r requirements.txt
 ```
 
 ## Environment Variables
-Set these before running:
+Create your API keys first:
+- OpenAI: https://platform.openai.com/api-keys
+- Olostep: https://app.olostep.com/
+
+Recommended: copy `.env.example` to `.env`, then fill in your keys.
 
 ```bash
-OPENAI_API_KEY=...
-OLOSTEP_API_KEY=...
-OLOSTEP_BASE_URL=https://api.olostep.com  # optional
+cp .env.example .env
+nano .env
+```
+
+
+If you prefer setting variables directly in your shell for the current session:
+
+
+```bash
+export OPENAI_API_KEY="sk-..."
+export OPENAI_BASE_URL="https://api.openai.com/v1"  # optional
+export OLOSTEP_API_KEY="..."
+export OLOSTEP_BASE_URL="https://api.olostep.com"  # optional
+```
+
+Optional runtime overrides for `script.py`:
+
+```bash
+INITIAL_TASK="Research current trends in AI agent tools used by SMB marketing teams..."
+MODEL_NAME="gpt-5.2"
+OUTPUT_DIR="output"
+OUTPUT_MD_PATH="output/agents_sdk_style_market_research_top3_brief.md"
+OUTPUT_JSON_PATH="output/agents_sdk_style_market_research_top3_result.json"
 ```
 
 ## Run
