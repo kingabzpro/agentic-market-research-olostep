@@ -1,5 +1,7 @@
 # Agentic Market Research & Trend Analysis with Olostep
 
+> → [Follow the step-by-step guide on the Olostep blog](https://www.olostep.com/blog/agentic-market-research-olostep)
+
 General-purpose market research workflow built with Olostep + OpenAI Agents SDK.
 
 This project helps you go from a plain-language research topic to:
